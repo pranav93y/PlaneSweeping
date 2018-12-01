@@ -4,9 +4,17 @@ DONT_DISPLAY_PLOT = False
 DISPLAY_PLOT = True
 
 # -----------------------------------------------
+# CALIBRATION CONSTANTS
+CALIB_IMAGE_X = 1008
+CALIB_IMAGE_Y = 756
+
+X_COUNT_CHESS = 6
+Y_COUNT_CHESS = 9
+
+# -----------------------------------------------
 # IMAGE PATHS
-CALIBRATION_WRITE_PATH = 'images/intrinsic/out/'
-CALIBRATION_READ_PATH = 'images/intrinsic/'
+CALIBRATION_WRITE_PATH = 'images/parameters/out'
+CALIBRATION_READ_PATH = 'images/parameters/'
 
 POSE_WRITE_PATH = 'images/pose/out/'
 POSE_READ_PATH = 'images/pose/'
