@@ -5,11 +5,11 @@ import os
 from utility import constants as ct
 
 
-def read(path, callback=None):
+def read(path, callback=None, COLOR=1):
     # Loads an image from a specified path
     # Allows for an optional callback function that is applied to the image
 
-    img = cv.imread(path, 1)
+    img = cv.imread(path, COLOR)
     if callback is not None:
         img = callback(img)
     return img
@@ -28,11 +28,11 @@ def write(image_path, image):
     cv.imwrite(image_path, image)
 
 
-def load_images_from_folder(folder_path, callback=None):
+def load_images_from_folder(folder_path, callback=None, COLOR=1):
     # Loads images and accepts an optional callback function that is applied to each image
     images = []
     for filename in os.listdir(folder_path):
-        img = cv.imread(os.path.join(folder_path, filename))
+        img = cv.imread(os.path.join(folder_path, filename), COLOR)
         if img is not None:
             if callback is not None:
                 img = callback(img)
