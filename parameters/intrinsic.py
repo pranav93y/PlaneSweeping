@@ -115,5 +115,5 @@ def undistort(image, intrinsic_matrix, distortion_parameters, name, display=ct.D
     undistorted_image = cv.undistort(image, intrinsic_matrix, distortion_parameters, None, None)
     if display:
         im.display("Undistorted Image", undistorted_image)
-    cv.imwrite(ct.POSE_WRITE_PATH + name, undistorted_image)
-    return undistorted_image
+    cv.imwrite(ct.POSE_WRITE_PATH + name, image)
+    return image

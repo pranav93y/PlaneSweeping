@@ -128,6 +128,13 @@ def __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t):
     projection_1 = np.matmul(intrinsic_matrix, np.hstack((np.identity(3), t)))
     projection_2 = np.matmul(intrinsic_matrix, np.hstack((R1, -1*t)))
 
+    print "----------------------------------------------------"
+    print "Rotation Matrix:"
+    print R1
+    print "----------------------------------------------------"
+    print "Translation Vector:"
+    print -1*t
+
     pts1 = np.transpose(pts1)
     pts2 = np.transpose(pts2)
 
@@ -143,7 +150,7 @@ def __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t):
 
     return projection_1, points_4d
 
-def __project_points__(projection, points_4d):
+def __project_points__(projection, points_4d, pts1, display=ct.DONT_DISPLAY_PLOT):
     projected = np.matmul(projection, points_4d)
     i = 0
     for x in projected[2]:
@@ -157,9 +164,20 @@ def __project_points__(projection, points_4d):
 
 
     im = plt.imread(ct.POSE_WRITE_PATH+"undistorted1.jpg",cv.IMREAD_UNCHANGED)
-    rgb_img = cv.cvtColor(im, cv.COLOR_BGR2RGB)
-    implot = plt.imshow(rgb_img)
-    plt.scatter(x, y)
-    plt.show()
+    im = cv.resize(im, (ct.IMAGE_X, ct.IMAGE_Y))
+    implot = plt.imshow(im,cmap='gray')
+    plt.scatter(x, y, s=40, c='b', alpha=0.5)
+    # plt.show()
+    plt.scatter(pts1[:,0], pts1[:, 1], c="g", s=20, alpha="1")
+    if display:
+        plt.show()
+    plt.savefig(ct.POSE_WRITE_PATH+'projected_points.jpg')
 
-    print projected
+
+def match_and_project(intrinsic_matrix, distortion_coefficients, display=ct.DONT_DISPLAY_PLOT):
+    _pts1, _pts2, img1, img2 = __get_matching_points__(intrinsic_matrix, distortion_coefficients, display)
+    F, pts1, pts2 = __compute_fundamental_matrix__(_pts1, _pts2)
+    draw_epipolar_lines(F, img1, img2, pts1, pts2, display)
+    R1, R2, t = __get_rotation_and_translation__(pts1, pts2, intrinsic_matrix)
+    projetion, points_4d = __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t)
+    __project_points__(projetion, points_4d, pts1, display)
