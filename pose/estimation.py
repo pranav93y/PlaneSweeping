@@ -110,10 +110,56 @@ def draw_epipolar_lines(F, img1, img2, pts1, pts2, display=ct.DONT_DISPLAY_PLOT)
 
 
 def __preprocess_(images, intrinsic_matrix, distortion_parameters, display=ct.DONT_DISPLAY_PLOT):
-    undistorted1 = it.undistort(images[0], intrinsic_matrix, distortion_parameters, "undistorted1.jpg", display)
-    undistorted2 = it.undistort(images[1], intrinsic_matrix, distortion_parameters, "undistorted2.jpg", display)
+    undistorted1 = it.undistort(cv.resize(images[0], (ct.IMAGE_X, ct.IMAGE_Y)), intrinsic_matrix, distortion_parameters, "undistorted1.jpg", display)
+    undistorted2 = it.undistort(cv.resize(images[1], (ct.IMAGE_X, ct.IMAGE_Y)), intrinsic_matrix, distortion_parameters, "undistorted2.jpg", display)
 
-    img1 = cv.resize(undistorted1, (ct.IMAGE_X, ct.IMAGE_Y))
-    img2 = cv.resize(undistorted2, (ct.IMAGE_X, ct.IMAGE_Y))
+    # img1 = cv.resize(undistorted1, (ct.IMAGE_X, ct.IMAGE_Y))
+    # img2 = cv.resize(undistorted2, (ct.IMAGE_X, ct.IMAGE_Y))
 
-    return img1, img2
+    return undistorted1, undistorted2
+
+def __get_rotation_and_translation__(pts1, pts2, intrinsic_matrix):
+    essential_matrix, _ = cv.findEssentialMat(pts1, pts2, intrinsic_matrix)
+    R1, R2, t = cv.decomposeEssentialMat(essential_matrix)
+    return R1, R2, t
+
+def __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t):
+    # R1, R2, t = __get_rotation_and_translation__(pts1, pts2, intrinsic_matrix)
+    projection_1 = np.matmul(intrinsic_matrix, np.hstack((np.identity(3), t)))
+    projection_2 = np.matmul(intrinsic_matrix, np.hstack((R1, -1*t)))
+
+    pts1 = np.transpose(pts1)
+    pts2 = np.transpose(pts2)
+
+    points_4d = cv.triangulatePoints(np.array(projection_1, dtype=np.float), np.array(projection_2, dtype=np.float), np.array(pts1,dtype=np.float), np.array(pts2, dtype=np.float))
+
+    i = 0
+    for x in points_4d[3]:
+        points_4d[0][i] = points_4d[0][i]/x
+        points_4d[1][i] = points_4d[1][i]/x
+        points_4d[2][i] = points_4d[2][i]/x
+        points_4d[3][i] = points_4d[3][i]/x
+        i += 1
+
+    return projection_1, points_4d
+
+def __project_points__(projection, points_4d):
+    projected = np.matmul(projection, points_4d)
+    i = 0
+    for x in projected[2]:
+        projected[0][i] = projected[0][i]/x
+        projected[1][i] = projected[1][i]/x
+        projected[2][i] = projected[2][i]/x
+        i += 1
+
+    x = projected[0]
+    y = projected[1]
+
+
+    im = plt.imread(ct.POSE_WRITE_PATH+"undistorted1.jpg",cv.IMREAD_UNCHANGED)
+    rgb_img = cv.cvtColor(im, cv.COLOR_BGR2RGB)
+    implot = plt.imshow(rgb_img)
+    plt.scatter(x, y)
+    plt.show()
+
+    print projected
