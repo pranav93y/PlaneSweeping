@@ -6,13 +6,15 @@ import numpy as np
 DISPLAY = ct.DONT_DISPLAY_PLOT
 
 intrinsic_matrix, distortion_coefficients, mean_error = it.calibrate(DISPLAY)
-print intrinsic_matrix
-print "----------------------------------"
-print distortion_coefficients
-print "----------------------------------"
 
 R, t, points_4d, projection_1, projection_2, intrinsic_matrix = et.match_and_project(intrinsic_matrix, distortion_coefficients, DISPLAY)
-
+print "----------------------------------"
+print "Distortion Coefficients: "
+print distortion_coefficients
+print "----------------------------------"
+print "Intrinsic Matrix: "
+print intrinsic_matrix
+print "----------------------------------"
 # homography = ps.find_homography(projection_1, projection_2, points_4d, intrinsic_matrix)
 #
 # ps.get_warped_images(homography, DISPLAY)

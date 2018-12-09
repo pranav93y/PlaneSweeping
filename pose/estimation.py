@@ -139,7 +139,7 @@ def __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t):
     for (rot, trans) in combinations:
         projection_2 = np.matmul(intrinsic_matrix, np.hstack((rot, trans)))
         points_4d = cv.triangulatePoints(np.array(projection_1, dtype=np.float), np.array(projection_2, dtype=np.float), np.array(pts1,dtype=np.float), np.array(pts2, dtype=np.float))
-        
+
         if min(points_4d[2]) > 0:
             print "R and t combination found"
             break

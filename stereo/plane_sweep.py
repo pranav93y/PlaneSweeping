@@ -13,7 +13,7 @@ def __find_min_and_max_depth__(points_4d):
 
 def __choose_eq_distances__(points_4d):
     min_depth, max_depth = __find_min_and_max_depth__(points_4d)
-    print "min: " + str(min_depth) + " max: " + str(max_depth)
+    print "depth min: " + str(min_depth) + " depth max: " + str(max_depth)
 
     depths = np.linspace(min_depth, max_depth, 20, dtype=float)
     return depths
