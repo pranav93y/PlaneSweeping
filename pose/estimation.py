@@ -129,19 +129,26 @@ def __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t):
     # R1, R2, t = __get_rotation_and_translation__(pts1, pts2, intrinsic_matrix)
     zero = np.array([0, 0, 0]).reshape(3, 1)
     projection_1 = np.matmul(intrinsic_matrix, np.hstack((np.identity(3), zero)))
-    projection_2 = np.matmul(intrinsic_matrix, np.hstack((R1, 1*t)))
+    #projection_2 = np.matmul(intrinsic_matrix, np.hstack((R1, 1*t)))
 
-    print "----------------------------------------------------"
-    print "Rotation Matrix:"
-    print R1
-    print "----------------------------------------------------"
-    print "Translation Vector:"
-    print -1*t
+    combinations = [(R1, t), (R2, t), (R1, -1*t), (R2, -1*t)]
 
     pts1 = np.transpose(pts1)
     pts2 = np.transpose(pts2)
 
-    points_4d = cv.triangulatePoints(np.array(projection_1, dtype=np.float), np.array(projection_2, dtype=np.float), np.array(pts1,dtype=np.float), np.array(pts2, dtype=np.float))
+    for (rot, trans) in combinations:
+        projection_2 = np.matmul(intrinsic_matrix, np.hstack((rot, trans)))
+        points_4d = cv.triangulatePoints(np.array(projection_1, dtype=np.float), np.array(projection_2, dtype=np.float), np.array(pts1,dtype=np.float), np.array(pts2, dtype=np.float))
+        
+        if min(points_4d[2]) > 0:
+            print "R and t combination found"
+            break
+    print "----------------------------------------------------"
+    print "Rotation Matrix:"
+    print rot
+    print "----------------------------------------------------"
+    print "Translation Vector:"
+    print trans
 
     i = 0
     for x in points_4d[3]:
@@ -158,7 +165,7 @@ def __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t):
 
     if flag:
         print "Z less than zero"
-    return R1, -1*t, points_4d, projection_1, projection_2
+    return rot, trans, points_4d, projection_1, projection_2
 
 
 def __project_points__(projection, points_4d, pts1, display=ct.DONT_DISPLAY_PLOT):

@@ -40,7 +40,7 @@ def get_calibration_parameters(display=ct.DONT_DISPLAY_PLOT):
         if ret:
             objpoints.append(objp)
 
-            cv.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+            cv.cornerSubPix(gray, corners, (12, 12), (-1, -1), criteria)
             imgpoints.append(corners)
 
             cv.drawChessboardCorners(image, (ct.Y_COUNT_CHESS, ct.X_COUNT_CHESS), corners, ret)
@@ -92,8 +92,6 @@ def undistort2(image, intrinsic_matrix, distortion_parameters, name, display=ct.
     h, w = image.shape[:2]
     # print(h,w)
     new_intrinsic_matrix, roi = cv.getOptimalNewCameraMatrix(intrinsic_matrix, distortion_parameters, (w, h), 0, (w, h))
-    print "+++++++++++++++++++++++++++++++++++"
-    print roi
     # undistort
     mapx, mapy = cv.initUndistortRectifyMap(intrinsic_matrix, distortion_parameters, None, new_intrinsic_matrix, (w, h), 5)
     undistored_image = cv.remap(image, mapx, mapy, cv.INTER_LINEAR)
