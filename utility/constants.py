@@ -19,8 +19,8 @@ CALIBRATION_READ_PATH = 'images/parameters/'
 POSE_WRITE_PATH = 'images/pose/out/'
 POSE_READ_PATH = 'images/pose/'
 
-STEREO_WRITE_PATH = 'images/hdr/out/'
-STEREO_READ_PATH = 'images/hdr/'
+STEREO_WRITE_PATH = 'images/stereo/out/'
+STEREO_READ_PATH = 'images/stereo/'
 
 TEST_WRITE_PATH = 'images/test/out/'
 TEST_READ_PATH = 'images/test/'
