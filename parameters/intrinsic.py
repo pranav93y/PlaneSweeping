@@ -92,7 +92,8 @@ def undistort2(image, intrinsic_matrix, distortion_parameters, name, display=ct.
     h, w = image.shape[:2]
     # print(h,w)
     new_intrinsic_matrix, roi = cv.getOptimalNewCameraMatrix(intrinsic_matrix, distortion_parameters, (w, h), 0, (w, h))
-
+    print "+++++++++++++++++++++++++++++++++++"
+    print roi
     # undistort
     mapx, mapy = cv.initUndistortRectifyMap(intrinsic_matrix, distortion_parameters, None, new_intrinsic_matrix, (w, h), 5)
     undistored_image = cv.remap(image, mapx, mapy, cv.INTER_LINEAR)
@@ -112,8 +113,8 @@ def undistort2(image, intrinsic_matrix, distortion_parameters, name, display=ct.
 
 
 def undistort(image, intrinsic_matrix, distortion_parameters, name, display=ct.DONT_DISPLAY_PLOT):
-    undistorted_image = cv.undistort(image, intrinsic_matrix, distortion_parameters, None, None)
+    undistorted_image = undistort2(image, intrinsic_matrix, distortion_parameters, "undistort.jpg", display)
     if display:
         im.display("Undistorted Image", undistorted_image)
-    cv.imwrite(ct.POSE_WRITE_PATH + name, image)
-    return image
+    cv.imwrite(ct.POSE_WRITE_PATH + name, undistorted_image)
+    return undistorted_image

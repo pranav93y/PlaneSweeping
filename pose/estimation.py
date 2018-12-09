@@ -125,7 +125,8 @@ def __get_rotation_and_translation__(pts1, pts2, intrinsic_matrix):
 
 def __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t):
     # R1, R2, t = __get_rotation_and_translation__(pts1, pts2, intrinsic_matrix)
-    projection_1 = np.matmul(intrinsic_matrix, np.hstack((np.identity(3), t)))
+    zero = np.array([0,0,0]).reshape(3,1)
+    projection_1 = np.matmul(intrinsic_matrix, np.hstack((np.identity(3), zero)))
     projection_2 = np.matmul(intrinsic_matrix, np.hstack((R1, -1*t)))
 
     print "----------------------------------------------------"
@@ -148,7 +149,15 @@ def __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t):
         points_4d[3][i] = points_4d[3][i]/x
         i += 1
 
-    return projection_1, points_4d
+    flag = 0
+    for x in points_4d[2]:
+        if x < 0:
+            flag = 1
+
+    if flag:
+        print "Z less than zero"
+    return R1, -1*t, points_4d, projection_1, projection_2
+
 
 def __project_points__(projection, points_4d, pts1, display=ct.DONT_DISPLAY_PLOT):
     projected = np.matmul(projection, points_4d)
@@ -163,7 +172,7 @@ def __project_points__(projection, points_4d, pts1, display=ct.DONT_DISPLAY_PLOT
     y = projected[1]
 
 
-    im = plt.imread(ct.POSE_WRITE_PATH+"undistorted1.jpg",cv.IMREAD_UNCHANGED)
+    im = plt.imread(ct.POSE_WRITE_PATH+"undistorted2.jpg",cv.IMREAD_UNCHANGED)
     im = cv.resize(im, (ct.IMAGE_X, ct.IMAGE_Y))
     implot = plt.imshow(im,cmap='gray')
     plt.scatter(x, y, s=40, c='b', alpha=0.5)
@@ -179,5 +188,7 @@ def match_and_project(intrinsic_matrix, distortion_coefficients, display=ct.DONT
     F, pts1, pts2 = __compute_fundamental_matrix__(_pts1, _pts2)
     draw_epipolar_lines(F, img1, img2, pts1, pts2, display)
     R1, R2, t = __get_rotation_and_translation__(pts1, pts2, intrinsic_matrix)
-    projetion, points_4d = __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t)
-    __project_points__(projetion, points_4d, pts1, display)
+    R, t, points_4d, projection_1, projection_2 = __triangulate_points__(intrinsic_matrix, pts1, pts2, R1, R2, t)
+    __project_points__(projection_1, points_4d, pts1, display)
+
+    return R, t, points_4d, projection_1, projection_2
