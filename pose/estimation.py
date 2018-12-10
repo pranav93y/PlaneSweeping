@@ -187,9 +187,10 @@ def __project_points__(projection, points_4d, pts1, display=ct.DONT_DISPLAY_PLOT
     plt.scatter(x, y, s=40, c='b', alpha=0.5)
     # plt.show()
     plt.scatter(pts1[:,0], pts1[:, 1], c="g", s=20, alpha="1")
+    plt.savefig(ct.POSE_WRITE_PATH + 'projected_points.jpg')
     if display:
         plt.show()
-    plt.savefig(ct.POSE_WRITE_PATH+'projected_points.jpg')
+
 
 
 def match_and_project(intrinsic_matrix, distortion_coefficients, display=ct.DONT_DISPLAY_PLOT):
