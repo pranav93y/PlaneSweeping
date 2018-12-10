@@ -1,8 +1,8 @@
 # Plane Sweeping Stereo
 
 ## Prerequisites
-- Python 3 
-- Python packages: cv2, numpy, os, glob
+- Python 2 
+- Python packages: opencv2 (3.3.0.10), opencv-contrib(3.3.0.10) numpy, os, glob, PIL
 - MAC OS or Windows 10 (Ubuntu Windows' Bash)
 
 ## Installation 
@@ -11,35 +11,9 @@
 git clone https://github.com/pranav93y/PlaneSweeping.git
 ```
 
-* Navigate to `main.py`
+* Navigate to `stereo.py`
 
 * Run the program:
 ```bash
-python3 main.py 
+python2 stereo.py 
 ```
-
-## Project Structure
-* `main.py`: Main program
-* `calibration.py`: Calibrates camera using the chessboard images
-* `camera_pose`:
-  
-## Output
-**Part 1**  
-For the images that were taken to calibrate the camera we obtain the following:
-* Intrinsic matrix K
-* Radial distortion coefficients
-* Reprojection mean square error
-  
-**Part 2**    
-  
-**Part 3**    
-Computation for finding the camera relative pose:
-* Few epipolar lines on the images.
-* The matrix R<sup>R</sup><sub>L</sub> and **r**<sup>R</sup>
-* Re-projected feature points on the first image
-
-**Part 4**   
-Creating a plane-sweeping stereo  
-* Values for *d<sub>min</sub>* and *d<sub>max</sub>*
-* N=20 warped second images
-* Resulting depth image in grayscale
