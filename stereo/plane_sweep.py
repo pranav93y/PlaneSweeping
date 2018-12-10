@@ -68,8 +68,6 @@ def run_abs_diff_and_block_filter(projection_1, projection_2, points_4d, intrins
 
     for image in warped_images:
         diff_image = cv.blur(cv.absdiff(image, image1), (20, 20))
-        if display:
-            im.display("diff", diff_image)
 
         diff.append(diff_image)
 
